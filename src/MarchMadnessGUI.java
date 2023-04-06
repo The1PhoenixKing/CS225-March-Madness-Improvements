@@ -57,11 +57,9 @@ public class MarchMadnessGUI extends Application{
     private Bracket selectedBracket;
     private Bracket simResultBracket;
 
-    
-    private ArrayList<Bracket> playerBrackets;
-    private HashMap<String, Bracket> playerMap;
+    // ArrayList<Bracket> list=new ArrayList<Bracket>();
 
-    
+    // private HashMap<String, Bracket> playerMap;
 
     private ScoreBoardTable scoreBoard;
     private TableView table;
@@ -69,8 +67,6 @@ public class MarchMadnessGUI extends Application{
     private GridPane loginP;
     private TournamentInfo teamInfo;
 
-    
-    
     @Override
     public void start(Stage primaryStage) {
         //try to load all the files, if there is an error display it
@@ -82,12 +78,10 @@ public class MarchMadnessGUI extends Application{
             showError(new Exception(ex.getMessage(),ex),true);
         }
         //deserialize stored brackets
-        playerBrackets = loadBrackets();
+        //playerBrackets = loadAllBrackets();
         
-        playerMap = new HashMap<>();
-        addAllToMap();
-        
-
+        //playerMap = new HashMap<>();
+        //addAllToMap();
 
         //the main layout container
         root = new BorderPane();
@@ -116,15 +110,15 @@ public class MarchMadnessGUI extends Application{
     public static void main(String[] args) {
         launch(args);
     }
-    
-    
-    
+
     /**
      * simulates the tournament  
      * simulation happens only once and
      * after the simulation no more users can login
      */
     private void simulate(){
+        ArrayList<Bracket> playerBrackets;
+
         //cant login and restart prog after simulate
         login.setDisable(true);
         simulate.setDisable(true);
@@ -133,6 +127,7 @@ public class MarchMadnessGUI extends Application{
        viewBracketButton.setDisable(false);
        
        teamInfo.simulate(simResultBracket);
+       playerBrackets = loadAllBrackets();
        for(Bracket b:playerBrackets){
            scoreBoard.addPlayer(b,b.scoreBracket(simResultBracket));
        }
@@ -195,15 +190,16 @@ public class MarchMadnessGUI extends Application{
       
       if(pos == 0) {
     	  selectedBracket=new Bracket(startingBracket);
-          bracketPane=new BracketPane(selectedBracket);
       }
-     
+        bracketPane=new BracketPane(selectedBracket);
+        displayPane(bracketPane);
+
       else {
     	 bracketPane=new BracketPane(selectedBracket);
       }
       bracketPane.switchToRegion(pos);
       displayPane(bracketPane);
-        
+
     }
     
     /**
@@ -237,9 +233,7 @@ public class MarchMadnessGUI extends Application{
         
        }
        //bracketPane=new BracketPane(selectedBracket);
-      
-      
-        
+
     }
     
     
@@ -362,21 +356,16 @@ public class MarchMadnessGUI extends Application{
             // the password user enter
             String playerPass = passwordField.getText();
 
-        
-          
-            
-            if (playerMap.get(name) != null) {
+            if (Arrays.asList(userList).contains(name)) {
                 //check password of user
                  
-                Bracket tmpBracket = this.playerMap.get(name);
-               
-                String password1 = tmpBracket.getPassword();
-
+                Bracket fileBracket = deseralizeBracket(name + ".ser");
+                String fileBracketPassword = fileBracket.getPassword();
 
                 try {
-                    if (Objects.equals(password1, hashText(playerPass))) {  // added hashing for passwords
+                    if (fileBracketPassword.equals(hashText(playerPass))) {  // added hashing for passwords
                         // load bracket
-                        selectedBracket=playerMap.get(name);
+                        selectedBracket=fileBracket;
                         chooseBracket();
                     }else{
                        infoAlert("The password you have entered is incorrect!");
@@ -390,14 +379,14 @@ public class MarchMadnessGUI extends Application{
                 if(!name.equals("")&&!playerPass.equals("")){
                     //create new bracket
                     Bracket tmpPlayerBracket = new Bracket(startingBracket, name);
-                    playerBrackets.add(tmpPlayerBracket);
+                    //playerBrackets.add(tmpPlayerBracket);
                     try {
                         tmpPlayerBracket.setPassword(hashText(playerPass));  //more hashing for passwords
                     } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
                         throw new RuntimeException(e);
                     }
 
-                    playerMap.put(name, tmpPlayerBracket);
+                    //playerMap.put(name, tmpPlayerBracket);
                     selectedBracket = tmpPlayerBracket;
                     enterUser.getItems().add(name);
                     //alert user that an account has been created
@@ -431,11 +420,11 @@ public class MarchMadnessGUI extends Application{
      * addAllToMap
      * adds all the brackets to the map for login
      */
-    private void addAllToMap(){
-        for(Bracket b:playerBrackets){
-            playerMap.put(b.getPlayerName(), b);   
-        }
-    }
+//    private void addAllToMap(){
+//        for(Bracket b:playerBrackets){
+//            playerMap.put(b.getPlayerName(), b);
+//        }
+//    }
     
     /**
      * The Exception handler
@@ -486,8 +475,7 @@ public class MarchMadnessGUI extends Application{
         alert.showAndWait();
         return alert.getResult()==ButtonType.YES;
     }
-    
-    
+
     /**
      * Tayon Watson 5/5
      * seralizedBracket
@@ -537,7 +525,7 @@ public class MarchMadnessGUI extends Application{
      * deseralizedBracket
      * @return deserialized bracket
      */
-    private ArrayList<Bracket> loadBrackets()
+    private ArrayList<Bracket> loadAllBrackets()
     {   
         ArrayList<Bracket> list=new ArrayList<Bracket>();
         File dir = new File(".");
