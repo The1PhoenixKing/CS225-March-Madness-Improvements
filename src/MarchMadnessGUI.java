@@ -135,7 +135,7 @@ public class MarchMadnessGUI extends Application{
        for(Bracket b:playerBrackets){
            scoreBoard.addPlayer(b,b.scoreBracket(simResultBracket));
        }
-        
+
         displayPane(table);
     }
     
@@ -167,11 +167,9 @@ public class MarchMadnessGUI extends Application{
       *
       */
     private void viewSimulatedBracket(){
-       bracketPane=new BracketPane(simResultBracket);
-       GridPane full = bracketPane.getFullPane();
-       full.setAlignment(Pos.CENTER);
-       full.setDisable(true);
-       displayPane(new ScrollPane(full));
+       bracketPane=new BracketPane(simResultBracket, true);
+       bracketPane.switchToRegion(4);
+       displayPane(bracketPane);
     }
 
     /**
@@ -180,10 +178,9 @@ public class MarchMadnessGUI extends Application{
      */
     private void viewPredictedBracket() {
         bracketPane=new BracketPane(selectedBracket);
-        GridPane full = bracketPane.getFullPane();
-        full.setAlignment(Pos.CENTER);
-        full.setDisable(true);
-        displayPane(new ScrollPane(full));
+        bracketPane.switchToRegion(4);
+        bracketPane.setDisable(true);
+        displayPane(bracketPane);
     }
     /**
      * allows user to choose bracket
