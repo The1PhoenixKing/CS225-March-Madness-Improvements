@@ -22,7 +22,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-
+import javax.swing.*;
 
 
 /**
@@ -40,9 +40,11 @@ public class MarchMadnessGUI extends Application{
     private BorderPane root;
     private ToolBar toolBar;
     private ToolBar btoolBar;
-    private Button simulate;
-    private Button login;
+    private Button saveButton;
+    private Button logoutButton;
+    private Button simulateButton;
     private Button scoreBoardButton;
+
     private Button viewPredictedBracketButton;
     private Button viewSimulatedBracketButton;
     private Button clearButton;
@@ -92,7 +94,7 @@ public class MarchMadnessGUI extends Application{
         CreateToolBars();
         
         //display login screen
-        login();
+        logout();
         
         setActions();
         root.setTop(toolBar);   
@@ -121,8 +123,8 @@ public class MarchMadnessGUI extends Application{
         ArrayList<Bracket> playerBrackets;
 
         //cant login and restart prog after simulate
-        login.setDisable(true);
-        simulate.setDisable(true);
+        simulateButton.setDisable(true);
+        saveButton.setDisable(true);
         viewPredictedBracketButton.setDisable(false);
         
        scoreBoardButton.setDisable(false);
@@ -141,9 +143,10 @@ public class MarchMadnessGUI extends Application{
      * Displays the login screen
      * 
      */
-    private void login(){            
-        login.setDisable(true);
-        simulate.setDisable(true);
+    private void logout(){
+        logoutButton.setDisable(true);
+        saveButton.setDisable(true);
+        simulateButton.setDisable(true);
         scoreBoardButton.setDisable(true);
         viewPredictedBracketButton.setDisable(true);
         viewSimulatedBracketButton.setDisable(true);
@@ -230,8 +233,8 @@ public class MarchMadnessGUI extends Application{
        if(bracketPane.isComplete()){
            btoolBar.setDisable(true);
            bracketPane.setDisable(true);
-           simulate.setDisable(false);
-           login.setDisable(false);
+           simulateButton.setDisable(false);
+           logoutButton.setDisable(false);
            //save the bracket along with account info
            seralizeBracket(selectedBracket);
 
@@ -265,8 +268,9 @@ public class MarchMadnessGUI extends Application{
     private void CreateToolBars(){
         toolBar  = new ToolBar();
         btoolBar  = new ToolBar();
-        login=new Button("Login");
-        simulate=new Button("Simulate");
+        saveButton = new Button("Save");
+        logoutButton =new Button("Logout");
+        simulateButton =new Button("Simulate");
         scoreBoardButton=new Button("ScoreBoard");
         viewPredictedBracketButton = new Button("View Predicted Bracket");
         viewSimulatedBracketButton = new Button("View Simulated Bracket");
@@ -275,8 +279,9 @@ public class MarchMadnessGUI extends Application{
         finalizeButton=new Button("Finalize");
         toolBar.getItems().addAll(
                 createSpacer(),
-                login,
-                simulate,
+                saveButton,
+                logoutButton,
+                simulateButton,
                 scoreBoardButton,
                 viewPredictedBracketButton,
                 viewSimulatedBracketButton,
@@ -296,8 +301,9 @@ public class MarchMadnessGUI extends Application{
     * sets the actions for each button
     */
     private void setActions(){
-        login.setOnAction(e->login());
-        simulate.setOnAction(e->simulate());
+        saveButton.setOnAction(e->save());
+        logoutButton.setOnAction(e->logout());
+        simulateButton.setOnAction(e->simulate());
         scoreBoardButton.setOnAction(e->scoreBoard());
         viewPredictedBracketButton.setOnAction(e-> viewPredictedBracket());
         viewSimulatedBracketButton.setOnAction(e->viewSimulatedBracket());
@@ -308,6 +314,10 @@ public class MarchMadnessGUI extends Application{
             bracketPane=new BracketPane(selectedBracket);
             displayPane(bracketPane);
         });
+    }
+
+    private void save() {
+        seralizeBracket(selectedBracket);
     }
 
     /**
@@ -379,6 +389,10 @@ public class MarchMadnessGUI extends Application{
                     if (fileBracketPassword.equals(hashText(playerPass))) {  // added hashing for passwords
                         // load bracket
                         selectedBracket=fileBracket;
+                        enterUser.setValue("");
+                        passwordField.setText("");
+                        saveButton.setDisable(false);
+                        logoutButton.setDisable(false);
                         chooseBracket();
                     }else{
                        infoAlert("The password you have entered is incorrect!");
