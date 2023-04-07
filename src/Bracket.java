@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.io.Serializable;
 import java.util.List;
@@ -74,6 +73,7 @@ public class Bracket implements Serializable //Hillary: This bracket class is to
 
     public void moveTeamUp(int position){
         int newPos = (int)((position-1)/2);
+
         //if (bracket.get(newPos).equals("")) removed by matt 5/7
         if(!bracket.get(position).equals(bracket.get(newPos))) {
             //removeAbove(newPos);
@@ -90,10 +90,7 @@ public class Bracket implements Serializable //Hillary: This bracket class is to
      * added by matt 5/1
      * resets all children of root location except for initial teams at final children
      * special behavior if root = 0; just resets the final 4
-     * 
-     *I think in order to use this method to clear the whole board, it should be called once for  the final four
-     *and then again either for each other subtree OR modified to clear all subtrees on one call. Dov Z
-     * 
+     *
      * @param root, everything below and including this is reset
      */
     public void resetSubtree(int root){
@@ -198,7 +195,7 @@ public class Bracket implements Serializable //Hillary: This bracket class is to
         }
         return empties;
     }
-    
+
     /** 
       * Hillary:
       * returns true or false depending on whether there are any empty slots in te bracket from a given point all the way to the starting 64 teams.
@@ -223,31 +220,68 @@ public class Bracket implements Serializable //Hillary: This bracket class is to
      * number of points is based on round
      * @param master, the master bracket of true winners to which all brackets are compared
      */
-    public int scoreBracket(Bracket master){
+    public ArrayList<Integer> scoreBracket(Bracket master){
         int score = 0;
-        if (bracket.get(0).equals(master.getBracket().get(0)))//finals
-            score+=32;
+        //all correctSelections related code by Dov
+        ArrayList<Integer> correctSelections = new ArrayList<Integer>();
+
+        if (bracket.get(0).equals(master.getBracket().get(0))){ //finals
+        	 score+=32;
+        	 //add that index to that index to mark correctly guessed
+        	 correctSelections.add(0, 0);
+        }
+        //else add a negative to indicate an incorrect guess -Dov
+        else correctSelections.add(0, -1);
+
         for (int i = 1; i < 3; i++) {
-            if (bracket.get(i).equals(master.getBracket().get(i)))//semi
-                score+=16;
+            if (bracket.get(i).equals(master.getBracket().get(i))){ //semi
+            	score+=16;
+            	correctSelections.add(i, i);
+            }
+
+            else correctSelections.add(i, -1);
+
         }
+
         for (int i = 3; i < 7; i++) {
-            if (bracket.get(i).equals(master.getBracket().get(i)))//quarters
-                score+=8;
+            if (bracket.get(i).equals(master.getBracket().get(i))){ //quarters
+            	 score+=8;
+            	 correctSelections.add(i, i);
+            }
+
+            else correctSelections.add(i, -1);
+
         }
+
         for (int i = 7; i < 15; i++) {
-            if (bracket.get(i).equals(master.getBracket().get(i)))//sweet 16
-            score+=4;
+            if (bracket.get(i).equals(master.getBracket().get(i))){ //sweet 16
+            	score+=4;
+            	correctSelections.add(i, i);
+            }
+
+            else correctSelections.add(i, -1);
+
         }
+
         for (int i = 15; i < 31; i++) {
-            if (bracket.get(i).equals(master.getBracket().get(i)))//round of 32
-            score+=2;
+            if (bracket.get(i).equals(master.getBracket().get(i))){//round of 32
+            	 score+=2;
+            	 correctSelections.add(i, i);
+            }
+
+            else correctSelections.add(i, -1);
         }
+
         for (int i = 31; i < 63; i++) {
-            if (bracket.get(i).equals(master.getBracket().get(i)))//round of 64
-            score+=1;
+            if (bracket.get(i).equals(master.getBracket().get(i))){//round of 64
+            	score+=1;
+            	correctSelections.add(i, i);
+            }
+
+            else correctSelections.add(i, -1);
         }
-        return score;
+
+        return correctSelections;
     }
 
     /**
