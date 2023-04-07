@@ -210,7 +210,6 @@ public class MarchMadnessGUI extends Application {
     	  selectedBracket=new Bracket(startingBracket);
       }
       bracketPane=new BracketPane(selectedBracket);
-      displayPane(bracketPane);
       bracketPane.switchToRegion(pos);
       displayPane(bracketPane);
 
@@ -584,5 +583,5 @@ public class MarchMadnessGUI extends Application {
         return hashString;
     }
 
-       
+
 }
