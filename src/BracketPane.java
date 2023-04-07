@@ -508,10 +508,16 @@ public class BracketPane extends BorderPane {
                         name.setText(teamName);
                 }
 
+                /**
+                 * Highlights the current node (used to indicate it need to be filled before finalizing)
+                 */
                 public void highlight() {
                         rect.setFill(Color.LIGHTPINK);
                 }
 
+                /**
+                 * Removes highlight from the current node (called when the team name is updated).
+                 */
                 public void unhighlight() {
                         rect.setFill(Color.TRANSPARENT);
                 }

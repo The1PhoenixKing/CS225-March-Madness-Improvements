@@ -186,6 +186,11 @@ public class Bracket implements Serializable //Hillary: This bracket class is to
         return true;
     }
 
+    /**
+     * This method is used to get a list of the empty spots in the bracket.
+     * It is used to highlight the empty spots in the bracket when a user tries to finalize their selections
+     * @return List of Integers representing the indices into the bracket tree of empty nodes
+     */
     public List<Integer> empties() {
         List<Integer> empties = new ArrayList<>();
         for (int i = 0; i < bracket.size(); i++) {
