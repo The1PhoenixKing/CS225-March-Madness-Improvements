@@ -35,11 +35,11 @@ public class TournamentInfo {//renamed from teamInfo by matt 5/4
         Team newTeam;
 
         try{
-            //InputStream u = getClass().getResourceAsStream("teamInfo.txt");
+            //InputStream u = getClass().getResourceAsStream("teamInfo.txt"); changed this to use FileInputStream
             inFS = new FileInputStream("teamInfo.txt"); // added by KF
-            //BufferedReader br = new BufferedReader(new InputStreamReader(u));
+            //BufferedReader br = new BufferedReader(new InputStreamReader(u));  //removed KF
             scnr = new Scanner(inFS);
-            //while((name = br.readLine()) != null){
+            //while((name = br.readLine()) != null){ //removed KF
             while (scnr.hasNextLine()) {
 
                 name = scnr.nextLine();
@@ -57,7 +57,7 @@ public class TournamentInfo {//renamed from teamInfo by matt 5/4
                 scnr.nextLine();   //gets rid of empty line between team infos
 
             }
-        } catch (NoSuchElementException ignored) {
+        } catch (NoSuchElementException ignored) {  // added code to handle file properly
         } finally {
             if (inFS != null) {
                 inFS.close();
