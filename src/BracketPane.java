@@ -1,4 +1,5 @@
 import javafx.event.EventHandler;
+
 import javafx.geometry.NodeOrientation;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -20,6 +21,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -38,6 +40,7 @@ public class BracketPane extends BorderPane {
          * Used to initiate the paint of the bracket nodes
          */
  //       private static boolean isTop = true;
+        private ArrayList<StackPane> buttons;
         /**
          * Maps the text "buttons" to it's respective grid-pane
          */
@@ -169,7 +172,7 @@ public class BracketPane extends BorderPane {
 
                 center = new GridPane();
 
-                ArrayList<StackPane> buttons = new ArrayList<>();
+                buttons = new ArrayList<>();
                 buttons.add(customButton("EAST"));
                 buttons.add(customButton("WEST"));
                 buttons.add(customButton("MIDWEST"));
@@ -235,6 +238,15 @@ public class BracketPane extends BorderPane {
                         });
                 }
 
+        }
+        
+        public void switchToRegion(int regionNum){
+            center = new GridPane();
+            System.out.println(regionNum);
+            center.add(new ScrollPane(panes.get(buttons.get(regionNum==0?4:regionNum-3))), 0, 0);
+            center.setAlignment(Pos.CENTER);
+            setCenter(center);
+            displayedSubtree = regionNum;
         }
 
         /**
