@@ -1,5 +1,7 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.io.Serializable; 
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * Bracket Class
@@ -185,6 +187,16 @@ public class Bracket implements Serializable //Hillary: This bracket class is to
             if(team.equals("")){ return false; }
         }
         return true;
+    }
+
+    public List<Integer> empties() {
+        List<Integer> empties = new ArrayList<>();
+        for (int i = 0; i < bracket.size(); i++) {
+            if (bracket.get(i).equals("")){
+                empties.add(i);
+            }
+        }
+        return empties;
     }
     
     /** 

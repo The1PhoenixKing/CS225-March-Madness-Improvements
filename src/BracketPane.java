@@ -15,6 +15,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javafx.scene.layout.Region;
 
@@ -302,6 +304,10 @@ public class BracketPane extends BorderPane {
          * @return True if completed, false otherwise.
          */
         public boolean isComplete() {
+                List<Integer> empties = currentBracket.empties();
+                for (Integer emptySpot : empties) {
+                        nodeMap.get(emptySpot).highlight();
+                }
                 return currentBracket.isComplete();
         }
 
@@ -475,7 +481,7 @@ public class BracketPane extends BorderPane {
                         name = new Label(teamName);
                         // setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
                         name.setTranslateX(5);
-                        getChildren().addAll(name, rect);
+                        getChildren().addAll(rect, name);
                 }
                 
                 public int getPos() {
@@ -497,8 +503,17 @@ public class BracketPane extends BorderPane {
                  * @param teamName The name to assign to the node.
                  */
                 public void setName(String teamName) {
+                        unhighlight();
                         this.teamName = teamName;
                         name.setText(teamName);
+                }
+
+                public void highlight() {
+                        rect.setFill(Color.LIGHTPINK);
+                }
+
+                public void unhighlight() {
+                        rect.setFill(Color.TRANSPARENT);
                 }
         }
 }
