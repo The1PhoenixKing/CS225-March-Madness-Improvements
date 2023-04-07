@@ -131,7 +131,13 @@ public class MarchMadnessGUI extends Application {
        teamInfo.simulate(simResultBracket);
        playerBrackets = loadAllBrackets();
        for(Bracket b:playerBrackets){
-           //scoreBoard.addPlayer(b,b.scoreBracket(simResultBracket));
+           //redone scoring to accommodate arraylist of correct positions - Phoenix
+           int score = 0;
+           ArrayList<Integer> correctPositions = b.scoreBracket(simResultBracket);
+           for (Integer position : correctPositions) {
+               score += 32/Math.pow(2 ,(int)(Math.log10(position + 1) / Math.log10(2)));
+           }
+           scoreBoard.addPlayer(b, score);
        }
         
         displayPane(table);
