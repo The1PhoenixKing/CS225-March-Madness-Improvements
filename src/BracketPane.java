@@ -1,4 +1,5 @@
 import javafx.event.EventHandler;
+
 import javafx.geometry.NodeOrientation;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -60,7 +61,7 @@ public class BracketPane extends BorderPane {
          * Important logical simplification for allowing for code that is easier
          * to maintain.https://github.com/The1PhoenixKing/CS225-March-Madness-Improvements/blob/master/src/TournamentInfo.java
          */
-        private HashMap<BracketNode, Integer> bracketMap = new HashMap<>();
+      //  private HashMap<BracketNode, Integer> bracketMap = new HashMap<>();
         /**
          * Reverse of the above;
          */
@@ -93,7 +94,7 @@ public class BracketPane extends BorderPane {
                 //conditional added by matt 5/7 to differentiate between left and right mouse click
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                         BracketNode n = (BracketNode) mouseEvent.getSource();
-                        int treeNum = bracketMap.get(n);
+                        int treeNum = n.getPos();
                         int nextTreeNum = (treeNum - 1) / 2;
                         //opponentTreeNum stuff by Dov
                         int opponentTreeNum = 2 * nextTreeNum + 1;
@@ -102,7 +103,7 @@ public class BracketPane extends BorderPane {
                         if (!nodeMap.get(nextTreeNum).getName().equals(n.getName()) && !nodeMap.get(opponentTreeNum).getName().equals("")) {
                                 currentBracket.removeAbove((nextTreeNum));
                                 clearAbove(treeNum);
-                                nodeMap.get((bracketMap.get(n) - 1) / 2).setName(n.getName());
+                                nodeMap.get((n.getPos() - 1) / 2).setName(n.getName());
                                 currentBracket.moveTeamUp(treeNum);
                         }
                 }
@@ -110,7 +111,7 @@ public class BracketPane extends BorderPane {
                 else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
                         String text = "";
                         BracketNode n = (BracketNode) mouseEvent.getSource();
-                        int treeNum = bracketMap.get(n);
+                        int treeNum = n.getPos();
                         String teamName = currentBracket.getBracket().get(treeNum);
                         try {
                                 TournamentInfo info = new TournamentInfo();
@@ -163,7 +164,7 @@ public class BracketPane extends BorderPane {
                 displayedSubtree=0; //seems to not do anything? Dov Z
                 this.currentBracket = currentBracket;
 
-                bracketMap = new HashMap<>();
+                //bracketMap = new HashMap<>();
                 nodeMap = new HashMap<>();
                 panes = new HashMap<>();
                 nodes = new ArrayList<>();
@@ -238,14 +239,14 @@ public class BracketPane extends BorderPane {
                 }
 
         }
-
+        
         public void switchToRegion(int regionNum){
-                center = new GridPane();
-                System.out.println(regionNum);
-                center.add(new ScrollPane(panes.get(buttons.get(regionNum==0?4:regionNum-3))), 0, 0);
-                center.setAlignment(Pos.CENTER);
-                setCenter(center);
-                displayedSubtree = regionNum;
+            center = new GridPane();
+            System.out.println(regionNum);
+            center.add(new ScrollPane(panes.get(buttons.get(regionNum==0?4:regionNum-3))), 0, 0);
+            center.setAlignment(Pos.CENTER);
+            setCenter(center);
+            displayedSubtree = regionNum;
         }
 
         /**
@@ -359,12 +360,15 @@ public class BracketPane extends BorderPane {
                 }
                 
                 
-                bracketMap.put(nodeFinal1, 1);
-                bracketMap.put(nodeFinal2, 2);
-                bracketMap.put(nodeFinal0, 0);
+                //bracketMap.put(nodeFinal1, 1);
+                //bracketMap.put(nodeFinal2, 2);
+               // bracketMap.put(nodeFinal0, 0);
                 nodeMap.put(1, nodeFinal1);
+                nodeFinal1.setPos(1);
                 nodeMap.put(2, nodeFinal2);
+                nodeFinal2.setPos(2);
                 nodeMap.put(0, nodeFinal0);
+                nodeFinal0.setPos(0);
          
                 finalPane.setMinWidth(400.0);
 
@@ -405,8 +409,10 @@ public class BracketPane extends BorderPane {
                                 nodes.add(last);
                                 getChildren().addAll(new Line(iX, iY, iX + iXO, iY), last);
                                 last.setName(currentBracket.getBracket().get(location));
-                                bracketMap.put(last, location);
+                               // bracketMap.put(last, location);
                                 nodeMap.put(location, last);
+                                System.out.println(location);
+                                last.setPos(location);
                         } else {
                                 ArrayList<BracketNode> aNodeList = new ArrayList<>();
                                 for (int i = 0; i < num; i++) {
@@ -431,8 +437,9 @@ public class BracketPane extends BorderPane {
                                 for (int j = 0; j < aNodeList.size(); j++) {
                                         //System.out.println(currentBracket.getBracket().get(tmpHelp.get(j)));
                                         aNodeList.get(j).setName(currentBracket.getBracket().get(tmpHelp.get(j)));
-                                        bracketMap.put(aNodeList.get(j), tmpHelp.get(j));
+                                       // bracketMap.put(aNodeList.get(j), tmpHelp.get(j));
                                         nodeMap.put(tmpHelp.get(j), aNodeList.get(j));
+                                        aNodeList.get(j).setPos(tmpHelp.get(j));
                                         //System.out.println(bracketMap.get(aNodeList.get(j)));
                                 }
                         }
@@ -447,6 +454,7 @@ public class BracketPane extends BorderPane {
                 private String teamName;
                 private Rectangle rect;
                 private Label name;
+                private int position;
 
                 /**
                  * Creates a BracketNode with,
@@ -468,6 +476,14 @@ public class BracketPane extends BorderPane {
                         // setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
                         name.setTranslateX(5);
                         getChildren().addAll(name, rect);
+                }
+                
+                public int getPos() {
+                	return position;
+                }
+                
+                public void setPos(int newPos) {
+                	position = newPos;
                 }
 
                 /**
