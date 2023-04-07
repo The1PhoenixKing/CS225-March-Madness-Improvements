@@ -2,6 +2,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.NodeOrientation;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -14,13 +15,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -30,6 +31,7 @@ import javafx.scene.layout.Region;
  * Created by Richard and Ricardo on 5/3/17.
  */
 public class BracketPane extends BorderPane {
+        private boolean isSimulated;
 
         /**
          * Reference to the graphical representation of the nodes within the bracket.
@@ -43,7 +45,7 @@ public class BracketPane extends BorderPane {
         /**
          * Maps the text "buttons" to it's respective grid-pane
          */
-        private HashMap<StackPane, Pane> panes;
+        private Pane[] panes; //changed from map to array - Phoenix
         /**
          * Reference to the current bracket.
          */
@@ -91,7 +93,7 @@ public class BracketPane extends BorderPane {
          */
         private EventHandler<MouseEvent> clicked = mouseEvent -> {
                 //conditional added by matt 5/7 to differentiate between left and right mouse click
-                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && !isSimulated) {
                         BracketNode n = (BracketNode) mouseEvent.getSource();
                         int treeNum = bracketMap.get(n);
                         int nextTreeNum = (treeNum - 1) / 2;
@@ -105,18 +107,32 @@ public class BracketPane extends BorderPane {
                                 nodeMap.get((bracketMap.get(n) - 1) / 2).setName(n.getName());
                                 currentBracket.moveTeamUp(treeNum);
                         }
+                        //System.out.println(bracketMap.get(n));
                 }
                 //added by matt 5/7, shows the teams info if you right click
                 else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
                         String text = "";
                         BracketNode n = (BracketNode) mouseEvent.getSource();
                         int treeNum = bracketMap.get(n);
-                        String teamName = currentBracket.getBracket().get(treeNum);
+                        String teamName = n.getName();
                         try {
                                 TournamentInfo info = new TournamentInfo();
                                 Team t = info.getTeam(teamName);
                                 //by Tyler - added the last two pieces of info to the pop up window
-                                text += "Team: " + teamName + " | Ranking: " + t.getRanking() + "\nMascot: " + t.getNickname() + "\nInfo: " + t.getInfo() + "\nAverage Offensive PPG: " + t.getOffensePPG() + "\nAverage Defensive PPG: "+ t.getDefensePPG();
+                                if (!isSimulated) {
+                                        text += "Team: " + teamName + " | Ranking: " + t.getRanking() + "\nMascot: " + t.getNickname() + "\nInfo: " + t.getInfo() + "\nAverage Offensive PPG: " + t.getOffensePPG() + "\nAverage Defensive PPG: " + t.getDefensePPG();
+                                } else { //changes the alert to display score on the if the current BracketPane has been simulated - Phoenix
+                                        //used code by Dov to get current match up
+                                        int parentNum = (treeNum - 1) / 2;
+                                        int childNum1 = 2 * parentNum + 2;
+                                        int childNum2 = 2 * parentNum + 1;
+
+                                        text += currentBracket.getBracket().get(childNum1) + " score: " + currentBracket.getTeamScore(childNum1) + " points\n" +
+                                                currentBracket.getBracket().get(childNum2) + " score: " + currentBracket.getTeamScore(childNum2) + " points\n" +
+                                                "The winner was: " + currentBracket.getBracket().get(parentNum);
+
+
+                                }
                         } catch (IOException e) {//if for some reason TournamentInfo isnt working, it will display info not found
                                 text += "Info for " + teamName + "not found";
                         }
@@ -154,35 +170,23 @@ public class BracketPane extends BorderPane {
         private GridPane center;
         private GridPane fullPane;
 
-
-        /**
-         * TODO: Reduce. reuse, recycle!
-         * Initializes the properties needed to construct a bracket.
-         */
-        public BracketPane(Bracket currentBracket) {
+        //new constructor to accommodate isSimulated, which is used to provide special functions to simulated BracketPanes - Phoenix
+        public BracketPane(Bracket currentBracket, boolean isSimulated) {
+                this.isSimulated = isSimulated;
                 displayedSubtree=0; //seems to not do anything? Dov Z
                 this.currentBracket = currentBracket;
 
                 bracketMap = new HashMap<>();
                 nodeMap = new HashMap<>();
-                panes = new HashMap<>();
+                panes = new Pane[5];
                 nodes = new ArrayList<>();
                 ArrayList<Root> roots = new ArrayList<>();
 
                 center = new GridPane();
 
-                buttons = new ArrayList<>();
-                buttons.add(customButton("EAST"));
-                buttons.add(customButton("WEST"));
-                buttons.add(customButton("MIDWEST"));
-                buttons.add(customButton("SOUTH"));
-                buttons.add(customButton("FULL"));
-                //not currently used, Dov Z
-               // ArrayList<GridPane> gridPanes = new ArrayList<>();
-
-                for (int m = 0; m < buttons.size() - 1; m++) {
+                for (int m = 0; m < 4; m++) {
                         roots.add(new Root(3 + m));
-                        panes.put(buttons.get(m), roots.get(m));
+                        panes[m] = roots.get(m);
                 }
                 Pane finalPane = createFinalFour();
                 //buttons.add(customButton("FINAL"));
@@ -200,7 +204,53 @@ public class BracketPane extends BorderPane {
                 fullPane.add(finalPane, 1, 0, 1, 2);
                 fullPane.add(gp2, 2, 0);
                 fullPane.setAlignment(Pos.CENTER);
-                panes.put(buttons.get((buttons.size() - 1)), fullPane);
+                panes[4] = fullPane;
+                finalPane.toBack();
+        }
+
+        public BracketPane(Bracket currentBracket) {
+                isSimulated = false;
+                displayedSubtree=0; //seems to not do anything? Dov Z
+                this.currentBracket = currentBracket;
+
+                bracketMap = new HashMap<>();
+                nodeMap = new HashMap<>();
+                panes = new Pane[5];
+                nodes = new ArrayList<>();
+                ArrayList<Root> roots = new ArrayList<>();
+
+                center = new GridPane();
+
+                buttons = new ArrayList<>();
+                buttons.add(customButton("EAST"));
+                buttons.add(customButton("WEST"));
+                buttons.add(customButton("MIDWEST"));
+                buttons.add(customButton("SOUTH"));
+                buttons.add(customButton("FULL"));
+                //not currently used, Dov Z
+               // ArrayList<GridPane> gridPanes = new ArrayList<>();
+
+                for (int m = 0; m < buttons.size() - 1; m++) {
+                        roots.add(new Root(3 + m));
+                        panes[m] = roots.get(m);
+                }
+                Pane finalPane = createFinalFour();
+                //buttons.add(customButton("FINAL"));
+                //panes.put(buttons.get(5), finalPane);
+                fullPane = new GridPane();
+                GridPane gp1 = new GridPane();
+                gp1.add(roots.get(0), 0, 0);
+                gp1.add(roots.get(1), 0, 1);
+                GridPane gp2 = new GridPane();
+                gp2.add(roots.get(2), 0, 0);
+                gp2.add(roots.get(3), 0, 1);
+                gp2.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+
+                fullPane.add(gp1, 0, 0);
+                fullPane.add(finalPane, 1, 0, 1, 2);
+                fullPane.add(gp2, 2, 0);
+                fullPane.setAlignment(Pos.CENTER);
+                panes[4] = fullPane;
                 finalPane.toBack();
 
                 // Initializes the button grid
@@ -227,9 +277,10 @@ public class BracketPane extends BorderPane {
                                  * @update Grant & Tyler 
                                  * 			panes are added as ScrollPanes to retain center alignment when moving through full-view and region-view
                                  */
-                                center.add(new ScrollPane(panes.get(t)), 0, 0);
+                                switchToRegion(buttons.indexOf(t));
+                                /*center.add(new ScrollPane(panes[buttons.indexOf(t)]), 0, 0);
                                 center.setAlignment(Pos.CENTER);
-                                setCenter(center);
+                                setCenter(center);*/
                                 //Grant 5/7 this is for clearing the tree it kind of works 
                                 //Grant what does this mean Dov Z
                                 displayedSubtree=buttons.indexOf(t)==7?0:buttons.indexOf(t)+3;
@@ -242,7 +293,7 @@ public class BracketPane extends BorderPane {
         public void switchToRegion(int regionNum){
                 center = new GridPane();
                 System.out.println(regionNum);
-                center.add(new ScrollPane(panes.get(buttons.get(regionNum==0?4:regionNum-3))), 0, 0);
+                center.add(new ScrollPane(panes[regionNum]), 0, 0);
                 center.setAlignment(Pos.CENTER);
                 setCenter(center);
                 displayedSubtree = regionNum;
@@ -338,7 +389,7 @@ public class BracketPane extends BorderPane {
         //commented sections now looped, Dov Z
         public Pane createFinalFour() {
                 Pane finalPane = new Pane();
-                
+
                 BracketNode[] nodeArr = new BracketNode[3];
                 
                 BracketNode nodeFinal0 = new BracketNode("", 162, 300, 70, 0);
@@ -357,8 +408,8 @@ public class BracketPane extends BorderPane {
                     nodeArr[i].setOnMouseDragExited(exit);
                     nodeArr[i].setStyle("-fx-border-color: darkblue");
                 }
-                
-                
+
+
                 bracketMap.put(nodeFinal1, 1);
                 bracketMap.put(nodeFinal2, 2);
                 bracketMap.put(nodeFinal0, 0);
@@ -384,8 +435,8 @@ public class BracketPane extends BorderPane {
                         createVertices(420, 200, 100, 20, 0, 0);
                         createVertices(320, 119, 100, 200, 1, 0);
                         createVertices(220, 60, 100, 100, 2, 200);
-                        createVertices(120, 35, 100, 50, 4, 100);
-                        createVertices(20, 25, 100, 25, 8, 50);
+                        createVertices(120, 35, 100, 50, 3, 100);
+                        createVertices(20, 25, 100, 25, 4, 50);
                         for (BracketNode n : nodes) {
                                 n.setOnMouseClicked(clicked);
                                 n.setOnMouseEntered(enter);
@@ -398,9 +449,9 @@ public class BracketPane extends BorderPane {
                  * Creates 3 lines in appropriate location unless it is the last line.
                  * Adds these lines and "BracketNodes" to the Pane of this inner class
                  */
-                private void createVertices(int iX, int iY, int iXO, int iYO, int num, int increment) {
+                private void createVertices(int iX, int iY, int iXO, int iYO, int round, int increment) {
                         int y = iY;
-                        if (num == 0 && increment == 0) {
+                        if (round == 0 && increment == 0) {
                                 BracketNode last = new BracketNode("", iX, y - 20, iXO, 20);
                                 nodes.add(last);
                                 getChildren().addAll(new Line(iX, iY, iX + iXO, iY), last);
@@ -408,32 +459,63 @@ public class BracketPane extends BorderPane {
                                 bracketMap.put(last, location);
                                 nodeMap.put(location, last);
                         } else {
-                                ArrayList<BracketNode> aNodeList = new ArrayList<>();
-                                for (int i = 0; i < num; i++) {
+                                //redid a lot of this else, hoping to allow for a single call of createVertices - Phoenix
+                                ArrayList<Line> lines = new ArrayList<>();
+                                int nodesNumber = (int)(Math.pow(2, round));
+                                for (int i = 0; i < nodesNumber/2; i++) {
+                                        int topBracketPos = ((location + 1) * (nodesNumber - 1)) + location + (i * 2);
+                                        int botBracketPos = topBracketPos + 1;
                                         Point2D tl = new Point2D(iX, y);
                                         Point2D tr = new Point2D(iX + iXO, y);
                                         Point2D bl = new Point2D(iX, y + iYO);
                                         Point2D br = new Point2D(iX + iXO, y + iYO);
                                         BracketNode nTop = new BracketNode("", iX, y - 20, iXO, 20);
-                                        aNodeList.add(nTop);
                                         nodes.add(nTop);
                                         BracketNode nBottom = new BracketNode("", iX, y + (iYO - 20), iXO, 20);
-                                        aNodeList.add(nBottom);
                                         nodes.add(nBottom);
-                                        Line top = new Line(tl.getX(), tl.getY(), tr.getX(), tr.getY());
-                                        Line bottom = new Line(bl.getX(), bl.getY(), br.getX(), br.getY());
-                                        Line right = new Line(tr.getX(), tr.getY(), br.getX(), br.getY());
-                                        getChildren().addAll(top, bottom, right, nTop, nBottom);
-                                       // isTop = !isTop;
-                                        y += increment;
-                                }
-                                ArrayList<Integer> tmpHelp = helper(location, num);
-                                for (int j = 0; j < aNodeList.size(); j++) {
+                                        lines.add(new Line(tl.getX(), tl.getY(), tr.getX(), tr.getY()));
+                                        lines.add(new Line(tr.getX(), tr.getY(), br.getX(), br.getY()));
+                                        if (topBracketPos % 2 == 1) {lines.add(new Line(bl.getX(), bl.getY(), br.getX(), br.getY()));}
+
+                                        getChildren().addAll(nTop, nBottom);
+                                        getChildren().addAll(lines);
+                                        // isTop = !isTop;
                                         //System.out.println(currentBracket.getBracket().get(tmpHelp.get(j)));
-                                        aNodeList.get(j).setName(currentBracket.getBracket().get(tmpHelp.get(j)));
-                                        bracketMap.put(aNodeList.get(j), tmpHelp.get(j));
-                                        nodeMap.put(tmpHelp.get(j), aNodeList.get(j));
-                                        //System.out.println(bracketMap.get(aNodeList.get(j)));
+                                        nTop.setOnMouseClicked(clicked);
+                                        nTop.setOnMouseEntered(enter);
+                                        nTop.setOnMouseExited(exit);
+                                        nTop.setName(currentBracket.getBracket().get(topBracketPos));
+                                        bracketMap.put(nTop, topBracketPos);
+                                        nodeMap.put(topBracketPos, nTop);
+
+                                        nBottom.setOnMouseClicked(clicked);
+                                        nBottom.setOnMouseEntered(enter);
+                                        nBottom.setOnMouseExited(exit);
+                                        nBottom.setName(currentBracket.getBracket().get(botBracketPos));
+                                        bracketMap.put(nBottom, botBracketPos);
+                                        nodeMap.put(botBracketPos, nBottom);
+                                        //colors most of the nodes a color that corresponds with the match result - Phoenix
+                                        if (isSimulated) {
+                                                int parentPos = (topBracketPos - 1) / 2;
+                                                String topScore = Integer.toString(currentBracket.getTeamScore(topBracketPos));
+                                                String botScore = Integer.toString(currentBracket.getTeamScore(botBracketPos));
+/*                                                Text topScoreText = new Text(tr.getX() - 20, tr.getY() + 10, topScore);
+                                                Text botScoreText = new Text(br.getX() - 20, br.getY() + 10, botScore);*/
+                                                if (currentBracket.getBracket().get(parentPos).equals(nTop.getName())) {
+                                                        nTop.setColor("green");
+                                                        nBottom.setColor("red");
+/*                                                        topScoreText.setFill(Paint.valueOf("green"));
+                                                        botScoreText.setFill(Paint.valueOf("red"));*/
+                                                } else {
+                                                        nTop.setColor("red");
+                                                        nBottom.setColor("green");
+/*                                                        topScoreText.setFill(Paint.valueOf("red"));
+                                                        botScoreText.setFill(Paint.valueOf("green"));*/
+                                                }
+                                                //getChildren().addAll(topScoreText, botScoreText);
+                                        }
+                                        lines.clear();
+                                        y += increment;
                                 }
                         }
 
@@ -483,6 +565,10 @@ public class BracketPane extends BorderPane {
                 public void setName(String teamName) {
                         this.teamName = teamName;
                         name.setText(teamName);
+                }
+
+                public void setColor(String color) {
+                        name.setTextFill(Paint.valueOf(color));
                 }
         }
 }
