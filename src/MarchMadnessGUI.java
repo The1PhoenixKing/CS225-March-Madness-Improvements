@@ -43,7 +43,8 @@ public class MarchMadnessGUI extends Application{
     private Button simulate;
     private Button login;
     private Button scoreBoardButton;
-    private Button viewBracketButton;
+    private Button viewPredictedBracketButton;
+    private Button viewSimulatedBracketButton;
     private Button clearButton;
     //private Button resetButton;
     private Button finalizeButton;
@@ -122,9 +123,10 @@ public class MarchMadnessGUI extends Application{
         //cant login and restart prog after simulate
         login.setDisable(true);
         simulate.setDisable(true);
+        viewPredictedBracketButton.setDisable(false);
         
        scoreBoardButton.setDisable(false);
-       viewBracketButton.setDisable(false);
+       viewSimulatedBracketButton.setDisable(false);
        
        teamInfo.simulate(simResultBracket);
        playerBrackets = loadAllBrackets();
@@ -143,32 +145,43 @@ public class MarchMadnessGUI extends Application{
         login.setDisable(true);
         simulate.setDisable(true);
         scoreBoardButton.setDisable(true);
-        viewBracketButton.setDisable(true);
+        viewPredictedBracketButton.setDisable(true);
+        viewSimulatedBracketButton.setDisable(true);
         btoolBar.setDisable(true);
         displayPane(loginP);
     }
-    
+
      /**
      * Displays the score board
-     * 
+     *
      */
     private void scoreBoard(){
         displayPane(table);
     }
-    
+
      /**
       * Displays Simulated Bracket
-      * 
+      *
       */
-    private void viewBracket(){
-       selectedBracket=simResultBracket;
-       bracketPane=new BracketPane(selectedBracket);
+    private void viewSimulatedBracket(){
+       bracketPane=new BracketPane(simResultBracket);
        GridPane full = bracketPane.getFullPane();
        full.setAlignment(Pos.CENTER);
        full.setDisable(true);
-       displayPane(new ScrollPane(full)); 
+       displayPane(new ScrollPane(full));
     }
-    
+
+    /**
+     * Displays previously chosen bracket
+     * Katherine Foley
+     */
+    private void viewPredictedBracket() {
+        bracketPane=new BracketPane(selectedBracket);
+        GridPane full = bracketPane.getFullPane();
+        full.setAlignment(Pos.CENTER);
+        full.setDisable(true);
+        displayPane(new ScrollPane(full));
+    }
     /**
      * allows user to choose bracket
      * 
@@ -180,14 +193,15 @@ public class MarchMadnessGUI extends Application{
         displayPane(bracketPane);
 
     }
+
     /**
      * resets current selected sub tree
      * for final4 reset Ro2 and winner
      */
     private void clear(){
-      
+
       int pos = bracketPane.clear();
-      
+
       if(pos == 0) {
     	  selectedBracket=new Bracket(startingBracket);
       }
@@ -197,7 +211,7 @@ public class MarchMadnessGUI extends Application{
       displayPane(bracketPane);
 
     }
-    
+
     /**
      * resets entire bracket
      * private void reset(){
@@ -208,10 +222,10 @@ public class MarchMadnessGUI extends Application{
             displayPane(bracketPane);
         }
     }
-    
-     * 
+
+     *
      */
-    
+
     private void finalizeBracket(){
        if(bracketPane.isComplete()){
            btoolBar.setDisable(true);
@@ -220,30 +234,30 @@ public class MarchMadnessGUI extends Application{
            login.setDisable(false);
            //save the bracket along with account info
            seralizeBracket(selectedBracket);
-            
+
        }else{
             infoAlert("You can only finalize a bracket once it has been completed.");
             //go back to bracket section selection screen
             // bracketPane=new BracketPane(selectedBracket);
             displayPane(bracketPane);
-        
+
        }
        //bracketPane=new BracketPane(selectedBracket);
 
     }
-    
-    
+
+
     /**
      * displays element in the center of the screen
-     * 
-     * @param p must use a subclass of Pane for layout. 
+     *
+     * @param p must use a subclass of Pane for layout.
      * to be properly center aligned in  the parent node
      */
     private void displayPane(Node p){
         root.setCenter(p);
         BorderPane.setAlignment(p,Pos.CENTER);
     }
-    
+
     /**
      * Creates toolBar and buttons.
      * adds buttons to the toolbar and saves global references to them
@@ -254,7 +268,8 @@ public class MarchMadnessGUI extends Application{
         login=new Button("Login");
         simulate=new Button("Simulate");
         scoreBoardButton=new Button("ScoreBoard");
-        viewBracketButton= new Button("View Simulated Bracket");
+        viewPredictedBracketButton = new Button("View Predicted Bracket");
+        viewSimulatedBracketButton = new Button("View Simulated Bracket");
         clearButton=new Button("Clear");
        // resetButton=new Button("Reset");
         finalizeButton=new Button("Finalize");
@@ -263,7 +278,8 @@ public class MarchMadnessGUI extends Application{
                 login,
                 simulate,
                 scoreBoardButton,
-                viewBracketButton,
+                viewPredictedBracketButton,
+                viewSimulatedBracketButton,
                 createSpacer()
         );
         btoolBar.getItems().addAll(
@@ -275,7 +291,7 @@ public class MarchMadnessGUI extends Application{
                 createSpacer()
         );
     }
-    
+
    /**
     * sets the actions for each button
     */
@@ -283,7 +299,8 @@ public class MarchMadnessGUI extends Application{
         login.setOnAction(e->login());
         simulate.setOnAction(e->simulate());
         scoreBoardButton.setOnAction(e->scoreBoard());
-        viewBracketButton.setOnAction(e->viewBracket());
+        viewPredictedBracketButton.setOnAction(e-> viewPredictedBracket());
+        viewSimulatedBracketButton.setOnAction(e->viewSimulatedBracket());
         clearButton.setOnAction(e->clear());
         //resetButton.setOnAction(e->reset());
         finalizeButton.setOnAction(e->finalizeBracket());
@@ -292,7 +309,7 @@ public class MarchMadnessGUI extends Application{
             displayPane(bracketPane);
         });
     }
-    
+
     /**
      * Creates a spacer for centering buttons in a ToolBar
      */
