@@ -174,7 +174,7 @@ public class MarchMadnessGUI extends Application {
       *
       */
     private void viewSimulatedBracket(){
-       bracketPane=new BracketPane(simResultBracket);
+       bracketPane=new BracketPane(simResultBracket, true);
        ArrayList<Integer> correctIndices = selectedBracket.scoreBracket(simResultBracket);
        bracketPane.highlightCorrect(correctIndices);
        bracketPane.switchToRegion(0);
@@ -186,7 +186,7 @@ public class MarchMadnessGUI extends Application {
      * Katherine Foley
      */
     private void viewPredictedBracket() {
-        bracketPane=new BracketPane(selectedBracket);
+        bracketPane=new BracketPane(selectedBracket, false);
         ArrayList<Integer> correctIndices = selectedBracket.scoreBracket(simResultBracket);
         bracketPane.highlightCorrect(correctIndices);
         bracketPane.switchToRegion(0);
@@ -200,7 +200,7 @@ public class MarchMadnessGUI extends Application {
    private void chooseBracket(){
         //login.setDisable(true);
         btoolBar.setDisable(false);
-        bracketPane=new BracketPane(selectedBracket);
+        bracketPane=new BracketPane(selectedBracket, false);
         displayPane(bracketPane);
 
     }
@@ -216,7 +216,7 @@ public class MarchMadnessGUI extends Application {
       if(pos == 0) {
     	  selectedBracket=new Bracket(startingBracket);
       }
-      bracketPane=new BracketPane(selectedBracket);
+      bracketPane=new BracketPane(selectedBracket, false);
       bracketPane.switchToRegion(pos);
       displayPane(bracketPane);
 
@@ -304,7 +304,7 @@ public class MarchMadnessGUI extends Application {
         // removed resetButton Dov
         finalizeButton.setOnAction(e->finalizeBracket());
         back.setOnAction(e->{
-            bracketPane=new BracketPane(selectedBracket);
+            bracketPane=new BracketPane(selectedBracket, false);
             displayPane(bracketPane);
         });
     }

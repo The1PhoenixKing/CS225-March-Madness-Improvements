@@ -15,6 +15,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -67,6 +68,8 @@ public class BracketPane extends BorderPane {
          */
         private HashMap<Integer, BracketNode> nodeMap = new HashMap<>();
 
+        private boolean isSimulated;
+
         /**
          * Clears the entries of a team future wins
          *
@@ -117,7 +120,24 @@ public class BracketPane extends BorderPane {
                                 TournamentInfo info = new TournamentInfo();
                                 Team t = info.getTeam(teamName);
                                 //by Tyler - added the last two pieces of info to the pop up window
-                                text += "Team: " + teamName + " | Ranking: " + t.getRanking() + "\nMascot: " + t.getNickname() + "\nInfo: " + t.getInfo() + "\nAverage Offensive PPG: " + t.getOffensePPG() + "\nAverage Defensive PPG: "+ t.getDefensePPG();
+                                if (!isSimulated) {
+                                        text += "Team: " + teamName + " | Ranking: " + t.getRanking() +
+                                                "\nMascot: " + t.getNickname() + "\nInfo: " + t.getInfo() +
+                                                "\nAverage Offensive PPG: " + t.getOffensePPG() + "\nAverage Defensive PPG: " + t.getDefensePPG();
+                                } else { //changes the alert to display score on the if the current BracketPane has been simulated - Phoenix
+                                        //used code by Dov to get current match up
+                                        int parentNum = (treeNum - 1) / 2;
+                                        int childNum1 = 2 * parentNum + 2;
+                                        int childNum2 = 2 * parentNum + 1;
+                                        int points = (int)(32 / Math.pow(2 ,(int)(Math.log10(parentNum + 1) / Math.log10(2))));
+
+                                        text += currentBracket.getBracket().get(childNum1) + "\tscore: " + currentBracket.getTeamScore(childNum1) + " points\n" +
+                                                currentBracket.getBracket().get(childNum2) + "\tscore: " + currentBracket.getTeamScore(childNum2) + " points\n" +
+                                                "The winner was: " + currentBracket.getBracket().get(parentNum) +
+                                                ((nodeMap.get(parentNum).getTextFill().equals(Color.LIGHTGREEN)) ? "\nYou got " + points + " points": "");
+
+
+                                }
                         } catch (IOException e) {//if for some reason TournamentInfo isnt working, it will display info not found
                                 text += "Info for " + teamName + "not found";
                         }
@@ -160,7 +180,8 @@ public class BracketPane extends BorderPane {
          * TODO: Reduce. reuse, recycle!
          * Initializes the properties needed to construct a bracket.
          */
-        public BracketPane(Bracket currentBracket) {
+        public BracketPane(Bracket currentBracket, boolean isSimulated) {
+                this.isSimulated = isSimulated;
                 displayedSubtree=0; //seems to not do anything? Dov Z
                 this.currentBracket = currentBracket;
 
@@ -304,15 +325,15 @@ public class BracketPane extends BorderPane {
         public boolean isComplete() {
                 List<Integer> empties = currentBracket.empties();
                 for (Integer emptySpot : empties) {
-                        nodeMap.get(emptySpot).highlightBad();
+                        nodeMap.get(emptySpot).highlightRect();
                 }
                 return currentBracket.isComplete();
         }
 
         public void highlightCorrect(ArrayList<Integer> correctIndices) {
                 for (int i = 0; i < nodeMap.size(); i++) {
-                        if (correctIndices.contains(i)) nodeMap.get(i).highlightGood();
-                        else nodeMap.get(i).highlightBad();
+                        Color color = (correctIndices.contains(i)) ? Color.LIGHTGREEN : Color.RED;
+                        nodeMap.get(i).highlightText(color);
                 }
         }
 
@@ -516,11 +537,17 @@ public class BracketPane extends BorderPane {
                 /**
                  * Highlights the current node (used to indicate it need to be filled before finalizing)
                  */
-                public void highlightBad() {
+                public void highlightRect() {
                         rect.setFill(Color.LIGHTPINK);
                 }
 
-                public void highlightGood() {rect.setFill(Color.LIGHTGREEN);}
+                public void highlightText(Color color) {
+                        name.setTextFill(color);
+                }
+
+                public Paint getTextFill() {
+                        return name.getTextFill();
+                }
 
                 /**
                  * Removes highlight from the current node (called when the team name is updated).

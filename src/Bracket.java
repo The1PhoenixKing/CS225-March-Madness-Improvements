@@ -226,64 +226,57 @@ public class Bracket implements Serializable //Hillary: This bracket class is to
      * @param master, the master bracket of true winners to which all brackets are compared
      */
     public ArrayList<Integer> scoreBracket(Bracket master){
-        int score = 0;
         //all correctSelections related code by Dov
         ArrayList<Integer> correctSelections = new ArrayList<Integer>();
 
         if (bracket.get(0).equals(master.getBracket().get(0))){ //finals
-        	 score+=32;
         	 //add that index to that index to mark correctly guessed
-        	 correctSelections.add(0, 0);
+        	 correctSelections.add(0);
         }
         //else add a negative to indicate an incorrect guess -Dov
-        else correctSelections.add(0, -1);
+        //else correctSelections.add(0, -1);
 
         for (int i = 1; i < 3; i++) {
             if (bracket.get(i).equals(master.getBracket().get(i))){ //semi
-            	score+=16;
-            	correctSelections.add(i, i);
+            	correctSelections.add(i);
             }
 
-            else correctSelections.add(i, -1);
+            //else correctSelections.add(i, -1);
 
         }
 
         for (int i = 3; i < 7; i++) {
             if (bracket.get(i).equals(master.getBracket().get(i))){ //quarters
-            	 score+=8;
-            	 correctSelections.add(i, i);
+            	 correctSelections.add(i);
             }
 
-            else correctSelections.add(i, -1);
+            //else correctSelections.add(i, -1);
 
         }
 
         for (int i = 7; i < 15; i++) {
             if (bracket.get(i).equals(master.getBracket().get(i))){ //sweet 16
-            	score+=4;
-            	correctSelections.add(i, i);
+            	correctSelections.add(i);
             }
 
-            else correctSelections.add(i, -1);
+            //else correctSelections.add(i, -1);
 
         }
 
         for (int i = 15; i < 31; i++) {
             if (bracket.get(i).equals(master.getBracket().get(i))){//round of 32
-            	 score+=2;
-            	 correctSelections.add(i, i);
+            	 correctSelections.add(i);
             }
 
-            else correctSelections.add(i, -1);
+            //else correctSelections.add(i, -1);
         }
 
         for (int i = 31; i < 63; i++) {
             if (bracket.get(i).equals(master.getBracket().get(i))){//round of 64
-            	score+=1;
-            	correctSelections.add(i, i);
+            	correctSelections.add(i);
             }
 
-            else correctSelections.add(i, -1);
+            //else correctSelections.add(i, -1);
         }
 
         return correctSelections;
