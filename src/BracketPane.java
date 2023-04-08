@@ -40,7 +40,6 @@ public class BracketPane extends BorderPane {
         /**
          * Used to initiate the paint of the bracket nodes
          */
- //       private static boolean isTop = true;
         private ArrayList<StackPane> buttons;
         /**
          * Maps the text "buttons" to it's respective grid-pane
@@ -58,11 +57,7 @@ public class BracketPane extends BorderPane {
          * Keeps track of whether or not bracket has been finalized.
          */
         private boolean finalized;
-        /**
-         * Important logical simplification for allowing for code that is easier
-         * to maintain.https://github.com/The1PhoenixKing/CS225-March-Madness-Improvements/blob/master/src/TournamentInfo.java
-         */
-      //  private HashMap<BracketNode, Integer> bracketMap = new HashMap<>();
+
         /**
          * Reverse of the above;
          */
@@ -82,12 +77,12 @@ public class BracketPane extends BorderPane {
                         clearAbove(nextTreeNum);
                 }
         }
-        
-        
+
+
         public int clear(){
-            clearSubtree(displayedSubtree);
-            
-            return displayedSubtree;
+                clearSubtree(displayedSubtree);
+
+                return displayedSubtree;
         }
 
         /**
@@ -102,7 +97,7 @@ public class BracketPane extends BorderPane {
                         //opponentTreeNum stuff by Dov
                         int opponentTreeNum = 2 * nextTreeNum + 1;
                         if(opponentTreeNum == treeNum) opponentTreeNum = 2 * nextTreeNum + 2;
-                        
+
                         if (!nodeMap.get(nextTreeNum).getName().equals(n.getName()) && !nodeMap.get(opponentTreeNum).getName().equals("")) {
                                 currentBracket.removeAbove((nextTreeNum));
                                 clearAbove(treeNum);
@@ -199,16 +194,13 @@ public class BracketPane extends BorderPane {
                 buttons.add(customButton("MIDWEST"));
                 buttons.add(customButton("SOUTH"));
                 buttons.add(customButton("FULL"));
-                //not currently used, Dov Z
-               // ArrayList<GridPane> gridPanes = new ArrayList<>();
 
                 for (int m = 0; m < buttons.size() - 1; m++) {
                         roots.add(new Root(3 + m));
                         panes.put(buttons.get(m), roots.get(m));
                 }
                 Pane finalPane = createFinalFour();
-                //buttons.add(customButton("FINAL"));
-                //panes.put(buttons.get(5), finalPane);
+
                 fullPane = new GridPane();
                 GridPane gp1 = new GridPane();
                 gp1.add(roots.get(0), 0, 0);
@@ -260,14 +252,14 @@ public class BracketPane extends BorderPane {
                 }
 
         }
-        
+
         public void switchToRegion(int regionNum){
-            center = new GridPane();
-            System.out.println(regionNum);
-            center.add(new ScrollPane(panes.get(buttons.get(regionNum==0?4:regionNum-3))), 0, 0);
-            center.setAlignment(Pos.CENTER);
-            setCenter(center);
-            displayedSubtree = regionNum;
+                center = new GridPane();
+                System.out.println(regionNum);
+                center.add(new ScrollPane(panes.get(buttons.get(regionNum==0?4:regionNum-3))), 0, 0);
+                center.setAlignment(Pos.CENTER);
+                setCenter(center);
+                displayedSubtree = regionNum;
         }
 
         /**
@@ -304,9 +296,7 @@ public class BracketPane extends BorderPane {
          * @param position The position to clear after
          */
         public void clearSubtree(int position) {
-        	//System.out.println(position);
                 currentBracket.resetSubtree(position);
-                
         }
 
         /**
@@ -367,41 +357,37 @@ public class BracketPane extends BorderPane {
                 pane.setStyle("-fx-background-color: orange;");
                 return pane;
         }
-        
+
         //commented sections now looped, Dov Z
         public Pane createFinalFour() {
                 Pane finalPane = new Pane();
-                
+
                 BracketNode[] nodeArr = new BracketNode[3];
                 
-                BracketNode nodeFinal0 = new BracketNode("", 162, 300, 70, 0);
-                BracketNode nodeFinal1 = new BracketNode("", 75, 400, 70, 0);
-                BracketNode nodeFinal2 = new BracketNode("", 250, 400, 70, 0);
+                BracketNode nodeFinal0 = new BracketNode("", 162, 300, 100, 20);
+                BracketNode nodeFinal1 = new BracketNode("", 75, 400, 100, 20);
+                BracketNode nodeFinal2 = new BracketNode("", 250, 400, 100, 20);
                 
                 nodeArr[0] = nodeFinal0;
                 nodeArr[1] = nodeFinal1;
                 nodeArr[2] = nodeFinal2;
-                
+
                 for(int i = 0; i < nodeArr.length; i++) {
-                	nodeArr[i].setName(currentBracket.getBracket().get(i));
-                	finalPane.getChildren().add(nodeArr[i]);
-                	nodeArr[i].setOnMouseClicked(clicked);
-                    nodeArr[i].setOnMouseDragEntered(enter);
-                    nodeArr[i].setOnMouseDragExited(exit);
-                    nodeArr[i].setStyle("-fx-border-color: darkblue");
+                        nodeArr[i].setName(currentBracket.getBracket().get(i));
+                        finalPane.getChildren().add(nodeArr[i]);
+                        nodeArr[i].setOnMouseClicked(clicked);
+                        nodeArr[i].setOnMouseDragEntered(enter);
+                        nodeArr[i].setOnMouseDragExited(exit);
+                        nodeArr[i].setStyle("-fx-border-color: darkblue");
                 }
-                
-                
-                //bracketMap.put(nodeFinal1, 1);
-                //bracketMap.put(nodeFinal2, 2);
-               // bracketMap.put(nodeFinal0, 0);
+
                 nodeMap.put(1, nodeFinal1);
                 nodeFinal1.setPos(1);
                 nodeMap.put(2, nodeFinal2);
                 nodeFinal2.setPos(2);
                 nodeMap.put(0, nodeFinal0);
                 nodeFinal0.setPos(0);
-         
+
                 finalPane.setMinWidth(400.0);
 
                 return finalPane;
@@ -441,7 +427,6 @@ public class BracketPane extends BorderPane {
                                 nodes.add(last);
                                 getChildren().addAll(new Line(iX, iY, iX + iXO, iY), last);
                                 last.setName(currentBracket.getBracket().get(location));
-                               // bracketMap.put(last, location);
                                 nodeMap.put(location, last);
                                 System.out.println(location);
                                 last.setPos(location);
@@ -462,17 +447,13 @@ public class BracketPane extends BorderPane {
                                         Line bottom = new Line(bl.getX(), bl.getY(), br.getX(), br.getY());
                                         Line right = new Line(tr.getX(), tr.getY(), br.getX(), br.getY());
                                         getChildren().addAll(top, bottom, right, nTop, nBottom);
-                                       // isTop = !isTop;
                                         y += increment;
                                 }
                                 ArrayList<Integer> tmpHelp = helper(location, num);
                                 for (int j = 0; j < aNodeList.size(); j++) {
-                                        //System.out.println(currentBracket.getBracket().get(tmpHelp.get(j)));
                                         aNodeList.get(j).setName(currentBracket.getBracket().get(tmpHelp.get(j)));
-                                       // bracketMap.put(aNodeList.get(j), tmpHelp.get(j));
                                         nodeMap.put(tmpHelp.get(j), aNodeList.get(j));
                                         aNodeList.get(j).setPos(tmpHelp.get(j));
-                                        //System.out.println(bracketMap.get(aNodeList.get(j)));
                                 }
                         }
 
@@ -505,17 +486,16 @@ public class BracketPane extends BorderPane {
                         rect = new Rectangle(rX, rY);
                         rect.setFill(Color.TRANSPARENT);
                         name = new Label(teamName);
-                        // setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
                         name.setTranslateX(5);
                         getChildren().addAll(rect, name);
                 }
-                
+
                 public int getPos() {
-                	return position;
+                        return position;
                 }
-                
+
                 public void setPos(int newPos) {
-                	position = newPos;
+                        position = newPos;
                 }
 
                 /**

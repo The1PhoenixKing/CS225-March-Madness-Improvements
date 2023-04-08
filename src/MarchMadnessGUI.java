@@ -46,6 +46,7 @@ public class MarchMadnessGUI extends Application {
     private Button viewSimulatedBracketButton;
     private Button clearButton;
     private Button finalizeButton;
+    private Button helpButton; //added AE
     
     //allows you to navigate back to division selection screen
     private Button back;
@@ -198,7 +199,6 @@ public class MarchMadnessGUI extends Application {
      * 
      */
    private void chooseBracket(){
-        //login.setDisable(true);
         btoolBar.setDisable(false);
         bracketPane=new BracketPane(selectedBracket, false);
         displayPane(bracketPane);
@@ -222,6 +222,11 @@ public class MarchMadnessGUI extends Application {
 
     }
 
+    private void help() {
+        infoAlert("If you're looking for guidance on how to use this app, review the attached User Guide for an in-depth explanation, or read below:\n" +
+                "\n" +
+                "This app is a March Madness bracket simulator. Create a new login with a username & password of your choice, make selections for each matchup on the bracket, and run the simulation to see how well your picks stack up to the simulated bracket. The more picks you get correct, the higher your score. Create multiple users to compare scores between each user's bracket on a shared leaderboard!");
+    }
 
     private void finalizeBracket(){
        if(bracketPane.isComplete()){
@@ -235,11 +240,9 @@ public class MarchMadnessGUI extends Application {
        }else{
             infoAlert("You can only finalize a bracket once it has been completed.");
             //go back to bracket section selection screen
-            // bracketPane=new BracketPane(selectedBracket);
             displayPane(bracketPane);
 
        }
-       //bracketPane=new BracketPane(selectedBracket);
 
     }
 
@@ -270,8 +273,10 @@ public class MarchMadnessGUI extends Application {
         viewSimulatedBracketButton = new Button("View Simulated Bracket");
         clearButton=new Button("Clear");
         finalizeButton=new Button("Finalize");
+        helpButton=new Button("Help"); // added AE
         toolBar.getItems().addAll(
                 createSpacer(),
+                helpButton, // added AE
                 saveButton, // added KF
                 logoutButton, // added KF
                 simulateButton,
@@ -283,7 +288,6 @@ public class MarchMadnessGUI extends Application {
         btoolBar.getItems().addAll(
                 createSpacer(),
                 clearButton,
-      //          resetButton,
                 finalizeButton,
                 back=new Button("Choose Division"),
                 createSpacer()
@@ -303,6 +307,7 @@ public class MarchMadnessGUI extends Application {
         clearButton.setOnAction(e->clear());
         // removed resetButton Dov
         finalizeButton.setOnAction(e->finalizeBracket());
+        helpButton.setOnAction(e->help());
         back.setOnAction(e->{
             bracketPane=new BracketPane(selectedBracket, false);
             displayPane(bracketPane);
