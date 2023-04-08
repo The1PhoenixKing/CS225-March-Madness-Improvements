@@ -162,6 +162,8 @@ public class BracketPane extends BorderPane {
         /**
          *
          * Initializes the properties needed to construct a bracket.
+         * @param currentBracket the bracket to be displayed
+         * @param isSimulated whether or not the bracket has been simulated
          */
         public BracketPane(Bracket currentBracket, boolean isSimulated) {
                 this.isSimulated = isSimulated;
