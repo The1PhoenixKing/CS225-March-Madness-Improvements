@@ -168,7 +168,7 @@ public class BracketPane extends BorderPane {
                 displayedSubtree=0; //seems to not do anything? Dov Z
                 this.currentBracket = currentBracket;
 
-                
+
                 nodeMap = new HashMap<>();
                 panes = new HashMap<>();
                 nodes = new ArrayList<>();
@@ -455,7 +455,13 @@ public class BracketPane extends BorderPane {
                 /**
                  * Creates 3 lines in appropriate location unless it is the last line.
                  * Adds these lines and "BracketNodes" to the Pane of this inner class
-                 *bracketMaps replaced by setPos() by Dov
+                 * bracketMaps replaced by setPos() by Dov
+                 * @param iX the start x position used in drawing elements
+                 * @param iY the start y position used in drawing elements
+                 * @param iXO the x offset from the starting position
+                 * @param iYO the y offset from the starting position
+                 * @param num the number of pairs of BracketNodes to be created
+                 * @param increment the amount to add to the y value between pairs of BracketNodes
                  */
                 private void createVertices(int iX, int iY, int iXO, int iYO, int num, int increment) {
                         int y = iY;
@@ -500,10 +506,22 @@ public class BracketPane extends BorderPane {
          * The BracketNode model for the Graphical display of the "Bracket"
          */
         private class BracketNode extends Pane {
+                /**
+                 * The text to be displayed
+                 */
                 private String teamName;
+                /**
+                 * The rectangular display background
+                 */
                 private Rectangle rect;
+                /**
+                 * The label that holds the display text
+                 */
                 private Label name;
                 //position related code added by Dov
+                /**
+                 * The positional index
+                 */
                 private int position;
 
                 /**
