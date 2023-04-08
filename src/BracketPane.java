@@ -15,14 +15,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -306,9 +304,16 @@ public class BracketPane extends BorderPane {
         public boolean isComplete() {
                 List<Integer> empties = currentBracket.empties();
                 for (Integer emptySpot : empties) {
-                        nodeMap.get(emptySpot).highlight();
+                        nodeMap.get(emptySpot).highlightBad();
                 }
                 return currentBracket.isComplete();
+        }
+
+        public void highlightCorrect(ArrayList<Integer> correctIndices) {
+                for (int i = 0; i < nodeMap.size(); i++) {
+                        if (correctIndices.contains(i)) nodeMap.get(i).highlightGood();
+                        else nodeMap.get(i).highlightBad();
+                }
         }
 
         /**
@@ -392,7 +397,7 @@ public class BracketPane extends BorderPane {
                 public Root(int location) {
                         this.location = location;
                         createVertices(420, 200, 100, 20, 0, 0);
-                        createVertices(320, 119, 100, 200, 1, 0);
+                        createVertices(320, 120, 100, 200, 1, 0);
                         createVertices(220, 60, 100, 100, 2, 200);
                         createVertices(120, 35, 100, 50, 4, 100);
                         createVertices(20, 25, 100, 25, 8, 50);
@@ -511,9 +516,11 @@ public class BracketPane extends BorderPane {
                 /**
                  * Highlights the current node (used to indicate it need to be filled before finalizing)
                  */
-                public void highlight() {
+                public void highlightBad() {
                         rect.setFill(Color.LIGHTPINK);
                 }
+
+                public void highlightGood() {rect.setFill(Color.LIGHTGREEN);}
 
                 /**
                  * Removes highlight from the current node (called when the team name is updated).

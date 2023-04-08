@@ -175,6 +175,8 @@ public class MarchMadnessGUI extends Application {
       */
     private void viewSimulatedBracket(){
        bracketPane=new BracketPane(simResultBracket);
+       ArrayList<Integer> correctIndices = selectedBracket.scoreBracket(simResultBracket);
+       bracketPane.highlightCorrect(correctIndices);
        bracketPane.switchToRegion(0);
        displayPane(bracketPane);
     }
@@ -185,6 +187,8 @@ public class MarchMadnessGUI extends Application {
      */
     private void viewPredictedBracket() {
         bracketPane=new BracketPane(selectedBracket);
+        ArrayList<Integer> correctIndices = selectedBracket.scoreBracket(simResultBracket);
+        bracketPane.highlightCorrect(correctIndices);
         bracketPane.switchToRegion(0);
         bracketPane.setDisable(true);
         displayPane(bracketPane);
