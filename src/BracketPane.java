@@ -90,19 +90,21 @@ public class BracketPane extends BorderPane {
          */
         private EventHandler<MouseEvent> clicked = mouseEvent -> {
                 //conditional added by matt 5/7 to differentiate between left and right mouse click
-                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                        BracketNode n = (BracketNode) mouseEvent.getSource();
-                        int treeNum = n.getPos();
-                        int nextTreeNum = (treeNum - 1) / 2;
-                        //opponentTreeNum stuff by Dov
-                        int opponentTreeNum = 2 * nextTreeNum + 1;
-                        if(opponentTreeNum == treeNum) opponentTreeNum = 2 * nextTreeNum + 2;
+                if (!isSimulated) {
+                        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                                BracketNode n = (BracketNode) mouseEvent.getSource();
+                                int treeNum = n.getPos();
+                                int nextTreeNum = (treeNum - 1) / 2;
+                                //opponentTreeNum stuff by Dov
+                                int opponentTreeNum = 2 * nextTreeNum + 1;
+                                if (opponentTreeNum == treeNum) opponentTreeNum = 2 * nextTreeNum + 2;
 
-                        if (!nodeMap.get(nextTreeNum).getName().equals(n.getName()) && !nodeMap.get(opponentTreeNum).getName().equals("")) {
-                                currentBracket.removeAbove((nextTreeNum));
-                                clearAbove(treeNum);
-                                nodeMap.get((n.getPos() - 1) / 2).setName(n.getName());
-                                currentBracket.moveTeamUp(treeNum);
+                                if (!nodeMap.get(nextTreeNum).getName().equals(n.getName()) && !nodeMap.get(opponentTreeNum).getName().equals("")) {
+                                        currentBracket.removeAbove((nextTreeNum));
+                                        clearAbove(treeNum);
+                                        nodeMap.get((n.getPos() - 1) / 2).setName(n.getName());
+                                        currentBracket.moveTeamUp(treeNum);
+                                }
                         }
                 }
                 //added by matt 5/7, shows the teams info if you right click
