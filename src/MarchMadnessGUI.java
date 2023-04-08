@@ -288,7 +288,6 @@ public class MarchMadnessGUI extends Application {
         btoolBar.getItems().addAll(
                 createSpacer(),
                 clearButton,
-      //          resetButton,
                 finalizeButton,
                 back=new Button("Choose Division"),
                 createSpacer()
