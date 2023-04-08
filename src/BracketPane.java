@@ -30,6 +30,10 @@ import javafx.scene.layout.Region;
 
 /**
  * Created by Richard and Ricardo on 5/3/17.
+ * Edited by Dov and AJ primarily, with small additions from Phoenix and Andrew E
+ *
+ * BracketPane handles the display and management of all Brackets. It also provides navigational tools
+ * to view sections of the Bracket at a time.
  */
 public class BracketPane extends BorderPane {
 
@@ -67,30 +71,14 @@ public class BracketPane extends BorderPane {
          * Whether or not a bracket is a simulated bracket.
          */
         private boolean isSimulated;
-
         /**
-         * Clears the entries of a team future wins
-         *
-         * @param treeNum
+         * Holds the GridPane to be centered upon for any given display
          */
-        private void clearAbove(int treeNum) {
-                int nextTreeNum = (treeNum - 1) / 2;
-                if (!nodeMap.get(nextTreeNum).getName().isEmpty()) {
-                        nodeMap.get(nextTreeNum).setName("");
-                        clearAbove(nextTreeNum);
-                }
-        }
-
+        private GridPane center;
         /**
-         * Clears a division of all team selections
-         * @return
-         * Dov
+         * The full display of a bracket
          */
-        public int clear(){
-                clearSubtree(displayedSubtree);
-
-                return displayedSubtree;
-        }
+        private GridPane fullPane;
 
         /**
          * Handles clicked events for BracketNode objects
@@ -171,14 +159,6 @@ public class BracketPane extends BorderPane {
 
         };
 
-        public GridPane getFullPane() {
-                return fullPane;
-        }
-
-        private GridPane center;
-        private GridPane fullPane;
-
-
         /**
          *
          * Initializes the properties needed to construct a bracket.
@@ -245,8 +225,8 @@ public class BracketPane extends BorderPane {
                         });
                         t.setOnMouseClicked(mouseEvent -> {
                                 setCenter(null);
-                                /**
-                                 * @update Grant & Tyler 
+                                /*
+                                 * Grant & Tyler
                                  * 			panes are added as ScrollPanes to retain center alignment when moving through full-view and region-view
                                  */
                                 center.add(new ScrollPane(panes.get(t)), 0, 0);
@@ -262,6 +242,37 @@ public class BracketPane extends BorderPane {
         }
 
         /**
+         * removes the text from every node above a given index in a tree
+         * @param treeNum the starting index to clear from
+         */
+        private void clearAbove(int treeNum) {
+                int nextTreeNum = (treeNum - 1) / 2;
+                if (!nodeMap.get(nextTreeNum).getName().isEmpty()) {
+                        nodeMap.get(nextTreeNum).setName("");
+                        clearAbove(nextTreeNum);
+                }
+        }
+
+        /**
+         * Clears a division of all team selections
+         * @return the current subtree being displayed
+         * Dov
+         */
+        public int clear(){
+                clearSubtree(displayedSubtree);
+
+                return displayedSubtree;
+        }
+
+        /**
+         * returns a gridPane containing the full display of brackets
+         * @return the full display of brackets
+         */
+        public GridPane getFullPane() {
+                return fullPane;
+        }
+
+        /**
          * Swaps to the Pane that corresponds to a given number
          * @param regionNum a number that indicates a region to be shown
          */
@@ -274,7 +285,8 @@ public class BracketPane extends BorderPane {
         }
 
         /**
-         * Helpful method to retrieve our magical numbers
+         * Helpful method to retrieve our magical numbers.
+         * Each number corresponds to the index of a BracketNode.
          *
          * @param root the root node (3,4,5,6)
          * @param pos  the position in the tree (8 (16) , 4 (8) , 2 (4) , 1 (2))
@@ -343,9 +355,8 @@ public class BracketPane extends BorderPane {
                 }
         }
 
-        /**
-         * @return true if the current-bracket is complete and the value
-         * of finalized is also true.
+        /** Returns whether or not the pane has been finalized
+         * @return true if the current-bracket is complete and the value of finalized is also true.
          */
         public boolean isFinalized() {
                 return currentBracket.isComplete() && finalized;
@@ -375,7 +386,7 @@ public class BracketPane extends BorderPane {
         }
 
         /**
-         * creates and fills the Pane that will contain the top two teams in the bracket
+         * Creates and fills the Pane that will contain the top two teams in the bracket
          * @return a Pane containing 3 nodes to represent the top two teams
          */
         public Pane createTopTwoPane() {
@@ -416,9 +427,15 @@ public class BracketPane extends BorderPane {
          * Creates the graphical representation of a subtree.
          */
         private class Root extends Pane {
-
+                /**
+                 * The index location of the starting root itself
+                 */
                 private int location;
 
+                /**
+                 * Constructs a segment of the overall tree from a starting location
+                 * @param location the index that this node corresponds to
+                 */
                 public Root(int location) {
                         this.location = location;
                         createVertices(420, 200, 100, 20, 0, 0);
@@ -506,10 +523,18 @@ public class BracketPane extends BorderPane {
                         getChildren().addAll(rect, name);
                 }
 
+                /**
+                 * gets the positional index in the tree
+                 * @return the position
+                 */
                 public int getPos() {
                         return position;
                 }
 
+                /**
+                 * sets a new positional index
+                 * @param newPos the new index
+                 */
                 public void setPos(int newPos) {
                         position = newPos;
                 }
@@ -532,21 +557,33 @@ public class BracketPane extends BorderPane {
 
                 /**
                  * Highlights the current node (used to indicate it need to be filled before finalizing)
+                 * Andrew E
                  */
                 public void highlightRect() {
                         rect.setFill(Color.LIGHTPINK);
                 }
 
+                /**
+                 * Highlights the text in a given Color
+                 * @param color the color to be changed to
+                 * Phoenix
+                 */
                 public void highlightText(Color color) {
                         name.setTextFill(color);
                 }
 
+                /**
+                 * Gets the current color used to fill the text
+                 * @return the current color
+                 * Phoenix
+                 */
                 public Paint getTextFill() {
                         return name.getTextFill();
                 }
 
                 /**
                  * Removes highlight from the current node (called when the team name is updated).
+                 * Andrew E
                  */
                 public void unhighlight() {
                         rect.setFill(Color.TRANSPARENT);
