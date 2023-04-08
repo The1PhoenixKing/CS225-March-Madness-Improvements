@@ -353,9 +353,9 @@ public class BracketPane extends BorderPane {
                 
                 BracketNode[] nodeArr = new BracketNode[3];
                 
-                BracketNode nodeFinal0 = new BracketNode("", 162, 300, 70, 0);
-                BracketNode nodeFinal1 = new BracketNode("", 75, 400, 70, 0);
-                BracketNode nodeFinal2 = new BracketNode("", 250, 400, 70, 0);
+                BracketNode nodeFinal0 = new BracketNode("", 162, 300, 100, 20);
+                BracketNode nodeFinal1 = new BracketNode("", 75, 400, 100, 20);
+                BracketNode nodeFinal2 = new BracketNode("", 250, 400, 100, 20);
                 
                 nodeArr[0] = nodeFinal0;
                 nodeArr[1] = nodeFinal1;
