@@ -63,7 +63,7 @@ public class BracketPane extends BorderPane {
         private boolean finalized;
 
         /**
-         * Reverse of the above;
+         * Accesses nodes based on their position
          */
         private HashMap<Integer, BracketNode> nodeMap = new HashMap<>();
 
@@ -89,7 +89,7 @@ public class BracketPane extends BorderPane {
                         BracketNode n = (BracketNode) mouseEvent.getSource();
                         int treeNum = n.getPos();
                         int nextTreeNum = (treeNum - 1) / 2;
-                        //opponentTreeNum stuff by Dov
+                        //opponentTreeNum stuff by Dov, n.getPos() replaces bracketMaps
                         int opponentTreeNum = 2 * nextTreeNum + 1;
                         if (opponentTreeNum == treeNum) opponentTreeNum = 2 * nextTreeNum + 2;
 
@@ -168,7 +168,7 @@ public class BracketPane extends BorderPane {
                 displayedSubtree=0; //seems to not do anything? Dov Z
                 this.currentBracket = currentBracket;
 
-                //bracketMap = new HashMap<>();
+                
                 nodeMap = new HashMap<>();
                 panes = new HashMap<>();
                 nodes = new ArrayList<>();
@@ -235,6 +235,7 @@ public class BracketPane extends BorderPane {
                                 //Grant 5/7 this is for clearing the tree it kind of works 
                                 //Grant what does this mean Dov Z
                                 displayedSubtree=buttons.indexOf(t)==7?0:buttons.indexOf(t)+3;
+                                //fixes boolean statment above
                                 if(displayedSubtree == 7) displayedSubtree = 0;
                         });
                 }
@@ -387,6 +388,7 @@ public class BracketPane extends BorderPane {
 
         /**
          * Creates and fills the Pane that will contain the top two teams in the bracket
+         * This method was compressed by Dov
          * @return a Pane containing 3 nodes to represent the top two teams
          */
         public Pane createTopTwoPane() {
@@ -410,7 +412,7 @@ public class BracketPane extends BorderPane {
                         nodeArr[i].setOnMouseDragExited(exit);
                         nodeArr[i].setStyle("-fx-border-color: darkblue");
                 }
-
+                //bracketMaps replaced by nodeFinalx.setPos() by Dov
                 nodeMap.put(1, nodeFinal1);
                 nodeFinal1.setPos(1);
                 nodeMap.put(2, nodeFinal2);
@@ -453,6 +455,7 @@ public class BracketPane extends BorderPane {
                 /**
                  * Creates 3 lines in appropriate location unless it is the last line.
                  * Adds these lines and "BracketNodes" to the Pane of this inner class
+                 *bracketMaps replaced by setPos() by Dov
                  */
                 private void createVertices(int iX, int iY, int iXO, int iYO, int num, int increment) {
                         int y = iY;
@@ -500,6 +503,7 @@ public class BracketPane extends BorderPane {
                 private String teamName;
                 private Rectangle rect;
                 private Label name;
+                //position related code added by Dov
                 private int position;
 
                 /**
