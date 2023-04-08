@@ -81,7 +81,11 @@ public class BracketPane extends BorderPane {
                 }
         }
 
-
+        /**
+         * Clears a division of all team selections
+         * @return
+         * Dov
+         */
         public int clear(){
                 clearSubtree(displayedSubtree);
 
@@ -327,6 +331,11 @@ public class BracketPane extends BorderPane {
                 return currentBracket.isComplete();
         }
 
+        /**
+         * Highlights correctly predicted team wins
+         * @param correctIndices
+         * Pheonix
+         */
         public void highlightCorrect(ArrayList<Integer> correctIndices) {
                 for (int i = 0; i < nodeMap.size() / 2; i++) {
                         Color color = (correctIndices.contains(i)) ? Color.LIGHTGREEN : Color.RED;
@@ -405,7 +414,6 @@ public class BracketPane extends BorderPane {
 
         /**
          * Creates the graphical representation of a subtree.
-         * Note, this is a vague model.
          */
         private class Root extends Pane {
 
@@ -426,7 +434,6 @@ public class BracketPane extends BorderPane {
                 }
 
                 /**
-                 * The secret sauce... well not really,
                  * Creates 3 lines in appropriate location unless it is the last line.
                  * Adds these lines and "BracketNodes" to the Pane of this inner class
                  */
