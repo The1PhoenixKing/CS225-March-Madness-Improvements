@@ -126,8 +126,8 @@ public class BracketPane extends BorderPane {
                                         int childNum2 = 2 * parentNum + 1;
                                         int points = (int)(32 / Math.pow(2 ,(int)(Math.log10(parentNum + 1) / Math.log10(2))));
 
-                                        text += currentBracket.getBracket().get(childNum1) + "\tscore: " + currentBracket.getTeamScore(childNum1) + " points\n" +
-                                                currentBracket.getBracket().get(childNum2) + "\tscore: " + currentBracket.getTeamScore(childNum2) + " points\n" +
+                                        text += currentBracket.getBracket().get(childNum1) + "score: " + currentBracket.getTeamScore(childNum1) + " points\n" +
+                                                currentBracket.getBracket().get(childNum2) + "score: " + currentBracket.getTeamScore(childNum2) + " points\n" +
                                                 "The winner was: " + currentBracket.getBracket().get(parentNum) +
                                                 ((nodeMap.get(parentNum).getTextFill().equals(Color.LIGHTGREEN)) ? "\nYou got " + points + " points": "");
 
@@ -321,7 +321,7 @@ public class BracketPane extends BorderPane {
         }
 
         public void highlightCorrect(ArrayList<Integer> correctIndices) {
-                for (int i = 0; i < nodeMap.size(); i++) {
+                for (int i = 0; i < nodeMap.size() / 2; i++) {
                         Color color = (correctIndices.contains(i)) ? Color.LIGHTGREEN : Color.RED;
                         nodeMap.get(i).highlightText(color);
                 }
