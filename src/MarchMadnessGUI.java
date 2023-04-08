@@ -199,7 +199,6 @@ public class MarchMadnessGUI extends Application {
      * 
      */
    private void chooseBracket(){
-        //login.setDisable(true);
         btoolBar.setDisable(false);
         bracketPane=new BracketPane(selectedBracket);
         displayPane(bracketPane);
@@ -241,11 +240,9 @@ public class MarchMadnessGUI extends Application {
        }else{
             infoAlert("You can only finalize a bracket once it has been completed.");
             //go back to bracket section selection screen
-            // bracketPane=new BracketPane(selectedBracket);
             displayPane(bracketPane);
 
        }
-       //bracketPane=new BracketPane(selectedBracket);
 
     }
 

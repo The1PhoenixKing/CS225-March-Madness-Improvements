@@ -14,10 +14,6 @@ public class Bracket implements Serializable //Hillary: This bracket class is to
     private transient int[] teamScores = new int[127];
     private String playerName;
     private String password;
-    static final int EAST_BRACKET = 3;
-    static final int WEST_BRACKET = 4;
-    static final int MIDWEST_BRACKET = 5;
-    static final int SOUTH_BRACKET = 6;
     public static final long serialVersionUID = 5609181678399742983L;
 
     //Constructor
@@ -38,11 +34,6 @@ public class Bracket implements Serializable //Hillary: This bracket class is to
      * @param starting, master bracket pre-simulation
      */
     public Bracket(Bracket starting){
-        /*bracket = new ArrayList<String>();
-        for(int i=0; i<127; i++){
-            bracket.add(i,starting.getBracket().get(i));
-        }*/
-        //code above removed and replaced by matt 5/1
         bracket = new ArrayList<String>(starting.getBracket());
     }
 
@@ -74,16 +65,10 @@ public class Bracket implements Serializable //Hillary: This bracket class is to
     public void moveTeamUp(int position){
         int newPos = (int)((position-1)/2);
 
-        //if (bracket.get(newPos).equals("")) removed by matt 5/7
         if(!bracket.get(position).equals(bracket.get(newPos))) {
-            //removeAbove(newPos);
             bracket.set(newPos, bracket.get(position));
         }
-        /* removed by matt 5/7
-        else {
-            removeAbove(newPos);
-            bracket.set(newPos, bracket.get(position));
-        }*/
+
     }
 
     /**
