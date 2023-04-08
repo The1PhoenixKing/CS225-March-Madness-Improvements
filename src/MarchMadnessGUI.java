@@ -117,7 +117,7 @@ public class MarchMadnessGUI extends Application {
      * after the simulation no more users can login
      */
 
-    private void simulate(){
+    private void simulate() {
         ArrayList<Bracket> playerBrackets;
 
         //cant login and restart prog after simulate
@@ -159,6 +159,8 @@ public class MarchMadnessGUI extends Application {
         viewPredictedBracketButton.setDisable(true);
         viewSimulatedBracketButton.setDisable(true);
         btoolBar.setDisable(true);
+        scoreBoard= new ScoreBoardTable();
+        table=scoreBoard.start();
         displayPane(loginP);
     }
 
