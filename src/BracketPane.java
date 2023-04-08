@@ -263,7 +263,6 @@ public class BracketPane extends BorderPane {
          */
         public void switchToRegion(int regionNum){
                 center = new GridPane();
-                System.out.println(regionNum);
                 center.add(new ScrollPane(panes.get(buttons.get(regionNum==0?4:regionNum-3))), 0, 0);
                 center.setAlignment(Pos.CENTER);
                 setCenter(center);
@@ -439,7 +438,6 @@ public class BracketPane extends BorderPane {
                                 getChildren().addAll(new Line(iX, iY, iX + iXO, iY), last);
                                 last.setName(currentBracket.getBracket().get(location));
                                 nodeMap.put(location, last);
-                                System.out.println(location);
                                 last.setPos(location);
                         } else {
                                 ArrayList<BracketNode> aNodeList = new ArrayList<>();
