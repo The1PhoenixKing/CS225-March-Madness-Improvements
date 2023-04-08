@@ -137,7 +137,7 @@ public class BracketPane extends BorderPane {
                                         text += currentBracket.getBracket().get(childNum1) + "score: " + currentBracket.getTeamScore(childNum1) + " points\n" +
                                                 currentBracket.getBracket().get(childNum2) + "score: " + currentBracket.getTeamScore(childNum2) + " points\n" +
                                                 "The winner was: " + currentBracket.getBracket().get(parentNum) +
-                                                ((nodeMap.get(parentNum).getTextFill().equals(Color.LIGHTGREEN)) ? "\nYou got " + points + " points": "");
+                                                ((nodeMap.get(parentNum).getTextFill().equals(Color.GREEN)) ? "\nYou got " + points + " points": "");
 
 
                                 }
@@ -333,12 +333,12 @@ public class BracketPane extends BorderPane {
 
         /**
          * Highlights correctly predicted team wins
-         * @param correctIndices
-         * Pheonix
+         * @param correctIndices the indices that correspond node with a correct prediction
+         * Phoenix
          */
         public void highlightCorrect(ArrayList<Integer> correctIndices) {
                 for (int i = 0; i < nodeMap.size() / 2; i++) {
-                        Color color = (correctIndices.contains(i)) ? Color.LIGHTGREEN : Color.RED;
+                        Color color = (correctIndices.contains(i)) ? Color.GREEN : Color.RED;
                         nodeMap.get(i).highlightText(color);
                 }
         }
