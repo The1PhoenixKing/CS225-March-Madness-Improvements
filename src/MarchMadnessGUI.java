@@ -37,12 +37,12 @@ public class MarchMadnessGUI extends Application {
     private BorderPane root;
     private ToolBar toolBar;
     private ToolBar btoolBar;
-    private Button saveButton;
-    private Button logoutButton;
+    private Button saveButton; // added KF
+    private Button logoutButton; // added KF
     private Button simulateButton;
     private Button scoreBoardButton;
 
-    private Button viewPredictedBracketButton;
+    private Button viewPredictedBracketButton; // added KF
     private Button viewSimulatedBracketButton;
     private Button clearButton;
     private Button finalizeButton;
@@ -222,6 +222,8 @@ public class MarchMadnessGUI extends Application {
 
     }
 
+    // removed reset function, Dov
+
     private void help() {
         infoAlert("If you're looking for guidance on how to use this app, review the attached User Guide for an in-depth explanation, or read below:\n" +
                 "\n" +
@@ -288,6 +290,7 @@ public class MarchMadnessGUI extends Application {
         btoolBar.getItems().addAll(
                 createSpacer(),
                 clearButton,
+      //        removed resetButton Dov
                 finalizeButton,
                 back=new Button("Choose Division"),
                 createSpacer()
@@ -332,15 +335,12 @@ public class MarchMadnessGUI extends Application {
         );
         return spacer;
     }
-    
-    
+
+    /*
+    LoginPane
+    Sergio and Joao
+     */
     private GridPane createLogin(){
-        
-        
-        /*
-        LoginPane
-        Sergio and Joao
-         */
 
         GridPane loginPane = new GridPane();
         loginPane.setAlignment(Pos.CENTER);
