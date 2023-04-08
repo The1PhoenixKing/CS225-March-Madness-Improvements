@@ -63,6 +63,9 @@ public class BracketPane extends BorderPane {
          */
         private HashMap<Integer, BracketNode> nodeMap = new HashMap<>();
 
+        /**
+         * Whether or not a bracket is a simulated bracket.
+         */
         private boolean isSimulated;
 
         /**
@@ -90,21 +93,19 @@ public class BracketPane extends BorderPane {
          */
         private EventHandler<MouseEvent> clicked = mouseEvent -> {
                 //conditional added by matt 5/7 to differentiate between left and right mouse click
-                if (!isSimulated) {
-                        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                                BracketNode n = (BracketNode) mouseEvent.getSource();
-                                int treeNum = n.getPos();
-                                int nextTreeNum = (treeNum - 1) / 2;
-                                //opponentTreeNum stuff by Dov
-                                int opponentTreeNum = 2 * nextTreeNum + 1;
-                                if (opponentTreeNum == treeNum) opponentTreeNum = 2 * nextTreeNum + 2;
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && !isSimulated) {
+                        BracketNode n = (BracketNode) mouseEvent.getSource();
+                        int treeNum = n.getPos();
+                        int nextTreeNum = (treeNum - 1) / 2;
+                        //opponentTreeNum stuff by Dov
+                        int opponentTreeNum = 2 * nextTreeNum + 1;
+                        if (opponentTreeNum == treeNum) opponentTreeNum = 2 * nextTreeNum + 2;
 
-                                if (!nodeMap.get(nextTreeNum).getName().equals(n.getName()) && !nodeMap.get(opponentTreeNum).getName().equals("")) {
-                                        currentBracket.removeAbove((nextTreeNum));
-                                        clearAbove(treeNum);
-                                        nodeMap.get((n.getPos() - 1) / 2).setName(n.getName());
-                                        currentBracket.moveTeamUp(treeNum);
-                                }
+                        if (!nodeMap.get(nextTreeNum).getName().equals(n.getName()) && !nodeMap.get(opponentTreeNum).getName().equals("")) {
+                                currentBracket.removeAbove((nextTreeNum));
+                                clearAbove(treeNum);
+                                nodeMap.get((n.getPos() - 1) / 2).setName(n.getName());
+                                currentBracket.moveTeamUp(treeNum);
                         }
                 }
                 //added by matt 5/7, shows the teams info if you right click
@@ -126,6 +127,7 @@ public class BracketPane extends BorderPane {
                                         int parentNum = (treeNum - 1) / 2;
                                         int childNum1 = 2 * parentNum + 2;
                                         int childNum2 = 2 * parentNum + 1;
+                                        //points are displayed if this match was predicted correctly
                                         int points = (int)(32 / Math.pow(2 ,(int)(Math.log10(parentNum + 1) / Math.log10(2))));
 
                                         text += currentBracket.getBracket().get(childNum1) + "score: " + currentBracket.getTeamScore(childNum1) + " points\n" +
@@ -135,7 +137,7 @@ public class BracketPane extends BorderPane {
 
 
                                 }
-                        } catch (IOException e) {//if for some reason TournamentInfo isnt working, it will display info not found
+                        } catch (IOException e) {//if for some reason TournamentInfo isn't working, it will display info not found
                                 text += "Info for " + teamName + "not found";
                         }
                         //create a popup with the team info
@@ -174,7 +176,7 @@ public class BracketPane extends BorderPane {
 
 
         /**
-         * TODO: Reduce. reuse, recycle!
+         *
          * Initializes the properties needed to construct a bracket.
          */
         public BracketPane(Bracket currentBracket, boolean isSimulated) {
@@ -201,7 +203,7 @@ public class BracketPane extends BorderPane {
                         roots.add(new Root(3 + m));
                         panes.put(buttons.get(m), roots.get(m));
                 }
-                Pane finalPane = createFinalFour();
+                Pane finalPane = createTopTwoPane();
 
                 fullPane = new GridPane();
                 GridPane gp1 = new GridPane();
@@ -255,6 +257,10 @@ public class BracketPane extends BorderPane {
 
         }
 
+        /**
+         * Swaps to the Pane that corresponds to a given number
+         * @param regionNum a number that indicates a region to be shown
+         */
         public void switchToRegion(int regionNum){
                 center = new GridPane();
                 System.out.println(regionNum);
@@ -360,8 +366,11 @@ public class BracketPane extends BorderPane {
                 return pane;
         }
 
-        //commented sections now looped, Dov Z
-        public Pane createFinalFour() {
+        /**
+         * creates and fills the Pane that will contain the top two teams in the bracket
+         * @return a Pane containing 3 nodes to represent the top two teams
+         */
+        public Pane createTopTwoPane() {
                 Pane finalPane = new Pane();
 
                 BracketNode[] nodeArr = new BracketNode[3];
@@ -397,7 +406,7 @@ public class BracketPane extends BorderPane {
 
         /**
          * Creates the graphical representation of a subtree.
-         * Note, this is a vague model. TODO: MAKE MODULAR
+         * Note, this is a vague model.
          */
         private class Root extends Pane {
 
